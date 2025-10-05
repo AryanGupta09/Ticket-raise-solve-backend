@@ -244,6 +244,76 @@ router.get('/docs', (req, res) => {
   });
 });
 
+// POST /api/create-test-user - Create a test user quickly
+router.post('/create-test-user', async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const bcrypt = require('bcryptjs');
+    
+    // Create test users if they don't exist
+    const testUsers = [
+      { name: 'Admin User', email: 'admin@helpdesk.com', password: 'admin123', role: 'admin' },
+      { name: 'Agent Smith', email: 'agent@helpdesk.com', password: 'agent123', role: 'agent' },
+      { name: 'John Doe', email: 'user@helpdesk.com', password: 'user123', role: 'user' }
+    ];
+    
+    const createdUsers = [];
+    
+    for (const userData of testUsers) {
+      const existingUser = await User.findOne({ email: userData.email });
+      if (!existingUser) {
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
+        const user = new User({
+          ...userData,
+          password: hashedPassword
+        });
+        await user.save();
+        createdUsers.push(userData.email);
+      }
+    }
+    
+    res.json({
+      message: 'Test users created successfully',
+      created: createdUsers,
+      credentials: {
+        admin: 'admin@helpdesk.com / admin123',
+        agent: 'agent@helpdesk.com / agent123',
+        user: 'user@helpdesk.com / user123'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: {
+        code: 'CREATE_USER_FAILED',
+        message: 'Failed to create test users'
+      }
+    });
+  }
+});
+
+// GET /api/seed - Seed database with test data (development only)
+router.get('/seed', async (req, res) => {
+  try {
+    const { seedData } = require('../utils/seed');
+    await seedData();
+    res.json({
+      message: 'Database seeded successfully',
+      credentials: {
+        admin: 'admin@helpdesk.com / admin123',
+        agent: 'agent@helpdesk.com / agent123',
+        user: 'user@helpdesk.com / user123'
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: {
+        code: 'SEED_FAILED',
+        message: 'Failed to seed database'
+      }
+    });
+  }
+});
+
 // GET /api/stats - System statistics (admin only)
 router.get('/stats', (req, res) => {
   // This would typically require admin authentication
