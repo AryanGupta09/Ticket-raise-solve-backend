@@ -23,8 +23,13 @@ const register = async (req, res) => {
       });
     }
 
-    // Create new user
-    const user = new User({ email, password, name, role });
+    // Create new user with hashed password
+    const user = new User({ 
+      email, 
+      password, // Password will be hashed by the model's pre-save middleware
+      name, 
+      role: role || 'user' 
+    });
     await user.save();
 
     // Generate token
@@ -42,7 +47,8 @@ const register = async (req, res) => {
     res.status(500).json({
       error: {
         code: 'REGISTRATION_FAILED',
-        message: 'Failed to register user'
+        message: 'Failed to register user',
+        details: process.env.NODE_ENV !== 'production' ? error.message : undefined
       }
     });
   }
@@ -89,7 +95,8 @@ const login = async (req, res) => {
     res.status(500).json({
       error: {
         code: 'LOGIN_FAILED',
-        message: 'Failed to login'
+        message: 'Failed to login',
+        details: process.env.NODE_ENV !== 'production' ? error.message : undefined
       }
     });
   }
