@@ -36,7 +36,9 @@ const register = async (req, res) => {
       token
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Registration error:', error);
+    }
     res.status(500).json({
       error: {
         code: 'REGISTRATION_FAILED',
@@ -81,7 +83,9 @@ const login = async (req, res) => {
       token
     });
   } catch (error) {
-    console.error('Login error:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Login error:', error);
+    }
     res.status(500).json({
       error: {
         code: 'LOGIN_FAILED',

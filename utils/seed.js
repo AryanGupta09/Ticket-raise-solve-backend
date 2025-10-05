@@ -9,14 +9,18 @@ const seedData = async () => {
   try {
     // Connect to database
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/helpdesk-mini');
-    console.log('Connected to MongoDB');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Connected to MongoDB');
+    }
 
     // Clear existing data
     await User.deleteMany({});
     await Ticket.deleteMany({});
     await Comment.deleteMany({});
     await Timeline.deleteMany({});
-    console.log('Cleared existing data');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Cleared existing data');
+    }
 
     // Create users
     const users = await User.create([
@@ -52,7 +56,9 @@ const seedData = async () => {
       }
     ]);
 
-    console.log('Created users');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Created users');
+    }
 
     // Create tickets
     const tickets = await Ticket.create([
@@ -97,7 +103,9 @@ const seedData = async () => {
       }
     ]);
 
-    console.log('Created tickets');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Created tickets');
+    }
 
     // Create timeline entries for tickets
     const timelineEntries = [];
@@ -132,7 +140,9 @@ const seedData = async () => {
     }
 
     await Timeline.create(timelineEntries);
-    console.log('Created timeline entries');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Created timeline entries');
+    }
 
     // Create some comments
     const comments = await Comment.create([
@@ -163,7 +173,9 @@ const seedData = async () => {
       }
     ]);
 
-    console.log('Created comments');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Created comments');
+    }
 
     // Create timeline entries for comments
     const commentTimelineEntries = comments.map(comment => ({
@@ -177,26 +189,34 @@ const seedData = async () => {
     }));
 
     await Timeline.create(commentTimelineEntries);
-    console.log('Created comment timeline entries');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Created comment timeline entries');
+    }
 
-    console.log('\n=== SEED DATA CREATED SUCCESSFULLY ===');
-    console.log('\nTest Credentials:');
-    console.log('Admin: admin@helpdesk.com / admin123');
-    console.log('Agent: agent@helpdesk.com / agent123');
-    console.log('Agent 2: agent2@helpdesk.com / agent123');
-    console.log('User: user@helpdesk.com / user123');
-    console.log('User 2: user2@helpdesk.com / user123');
-    console.log('\nDatabase seeded with:');
-    console.log(`- ${users.length} users`);
-    console.log(`- ${tickets.length} tickets`);
-    console.log(`- ${comments.length} comments`);
-    console.log(`- ${timelineEntries.length + commentTimelineEntries.length} timeline entries`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('\n=== SEED DATA CREATED SUCCESSFULLY ===');
+      console.log('\nTest Credentials:');
+      console.log('Admin: admin@helpdesk.com / admin123');
+      console.log('Agent: agent@helpdesk.com / agent123');
+      console.log('Agent 2: agent2@helpdesk.com / agent123');
+      console.log('User: user@helpdesk.com / user123');
+      console.log('User 2: user2@helpdesk.com / user123');
+      console.log('\nDatabase seeded with:');
+      console.log(`- ${users.length} users`);
+      console.log(`- ${tickets.length} tickets`);
+      console.log(`- ${comments.length} comments`);
+      console.log(`- ${timelineEntries.length + commentTimelineEntries.length} timeline entries`);
+    }
 
   } catch (error) {
-    console.error('Seed error:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Seed error:', error);
+    }
   } finally {
     await mongoose.disconnect();
-    console.log('Disconnected from MongoDB');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Disconnected from MongoDB');
+    }
     process.exit(0);
   }
 };

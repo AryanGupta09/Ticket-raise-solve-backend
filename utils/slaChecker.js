@@ -11,7 +11,9 @@ const checkSLABreaches = async () => {
       status: { $nin: ['resolved', 'closed', 'breached'] }
     });
 
-    console.log(`Found ${breachedTickets.length} tickets with SLA breaches`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Found ${breachedTickets.length} tickets with SLA breaches`);
+    }
 
     for (const ticket of breachedTickets) {
       // Update ticket status to breached
@@ -32,12 +34,16 @@ const checkSLABreaches = async () => {
         }
       });
 
-      console.log(`Marked ticket ${ticket._id} as SLA breached`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`Marked ticket ${ticket._id} as SLA breached`);
+      }
     }
 
     return breachedTickets.length;
   } catch (error) {
-    console.error('SLA breach check error:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('SLA breach check error:', error);
+    }
     return 0;
   }
 };

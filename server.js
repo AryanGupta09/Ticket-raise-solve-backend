@@ -15,9 +15,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-domain.com', 'https://helpdesk-mini-frontend.onrender.com']
-    : true,
+  origin: true, // Allow all origins for now
   credentials: true
 }));
 app.use(express.json());
@@ -166,7 +164,9 @@ app.get('/.well-known/hackathon.json', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  if (process.env.NODE_ENV !== 'production') {
+    console.error(err.stack);
+  }
   
   if (err.name === 'ValidationError') {
     const field = Object.keys(err.errors)[0];
@@ -213,34 +213,28 @@ mongoose.connect(mongoUri, {
   useUnifiedTopology: true,
 })
   .then(() => {
-    console.log('✅ Connected to MongoDB');
-    
     // Start SLA checker cron job (runs every 5 minutes)
     cron.schedule('*/5 * * * *', () => {
-      console.log('Running SLA breach check...');
       checkSLABreaches();
     });
     
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-      console.log(`🎯 Hackathon info: http://localhost:${PORT}/.well-known/hackathon.json`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`🚀 Server running on port ${PORT}`);
+        console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+      }
     });
   })
   .catch(err => {
-    console.error('❌ Database connection error:', err.message);
-    console.log('\n🔧 To fix this issue:');
-    console.log('1. Install MongoDB: https://www.mongodb.com/try/download/community');
-    console.log('2. Or use MongoDB Atlas (cloud): https://www.mongodb.com/atlas');
-    console.log('3. Or update MONGODB_URI in .env file\n');
+    console.error('Database connection error:', err.message);
     
     // Start server anyway for demo purposes
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
-      console.log(`⚠️  Server running on port ${PORT} (without database)`);
-      console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-      console.log('💡 Note: API endpoints will return database errors until MongoDB is connected');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`Server running on port ${PORT} (without database)`);
+      }
     });
   });
 

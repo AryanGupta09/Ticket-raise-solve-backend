@@ -61,7 +61,9 @@ const createTicket = async (req, res) => {
             ticket
         });
     } catch (error) {
-        console.error('Create ticket error:', error);
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('Create ticket error:', error);
+        }
         res.status(500).json({
             error: {
                 code: 'TICKET_CREATION_FAILED',
@@ -111,7 +113,9 @@ const getTickets = async (req, res) => {
             next_offset: nextOffset
         });
     } catch (error) {
-        console.error('Get tickets error:', error);
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('Get tickets error:', error);
+        }
         res.status(500).json({
             error: {
                 code: 'FETCH_TICKETS_FAILED',
@@ -176,7 +180,9 @@ const getTicketById = async (req, res) => {
             timeline
         });
     } catch (error) {
-        console.error('Get ticket error:', error);
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('Get ticket error:', error);
+        }
         res.status(500).json({
             error: {
                 code: 'FETCH_TICKET_FAILED',
@@ -304,7 +310,9 @@ const updateTicket = async (req, res) => {
             ticket: updatedTicket
         });
     } catch (error) {
-        console.error('Update ticket error:', error);
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('Update ticket error:', error);
+        }
         res.status(500).json({
             error: {
                 code: 'UPDATE_TICKET_FAILED',
@@ -390,7 +398,9 @@ const addComment = async (req, res) => {
             comment
         });
     } catch (error) {
-        console.error('Add comment error:', error);
+        if (process.env.NODE_ENV !== 'production') {
+            console.error('Add comment error:', error);
+        }
         res.status(500).json({
             error: {
                 code: 'ADD_COMMENT_FAILED',

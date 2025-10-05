@@ -20,7 +20,9 @@ const getUsers = async (req, res) => {
       users
     });
   } catch (error) {
-    console.error('Get users error:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Get users error:', error);
+    }
     res.status(500).json({
       error: {
         code: 'FETCH_USERS_FAILED',
@@ -75,7 +77,9 @@ const updateUserRole = async (req, res) => {
       user
     });
   } catch (error) {
-    console.error('Update user role error:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Update user role error:', error);
+    }
     res.status(500).json({
       error: {
         code: 'UPDATE_USER_FAILED',
@@ -129,7 +133,9 @@ const deactivateUser = async (req, res) => {
       user
     });
   } catch (error) {
-    console.error('Deactivate user error:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Deactivate user error:', error);
+    }
     res.status(500).json({
       error: {
         code: 'DEACTIVATE_USER_FAILED',
@@ -150,7 +156,9 @@ const getAgents = async (req, res) => {
       agents
     });
   } catch (error) {
-    console.error('Get agents error:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Get agents error:', error);
+    }
     res.status(500).json({
       error: {
         code: 'FETCH_AGENTS_FAILED',
