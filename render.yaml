@@ -1,0 +1,13 @@
+# Render Configuration for HelpDesk Mini Backend
+
+# Build Command
+npm install
+
+# Start Command  
+npm start
+
+# Environment
+NODE_ENV=production
+
+# Health Check Path
+/api/health
